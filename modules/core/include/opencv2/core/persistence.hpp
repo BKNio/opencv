@@ -890,6 +890,14 @@ void write(FileStorage& fs, const Rect_<_Tp>& r )
     write(fs, r.height);
 }
 
+static inline
+void write(FileStorage& fs, const RotatedRect& rr )
+{
+    write(fs, rr.center);
+    write(fs, rr.size);
+    write(fs, rr.angle);
+}
+
 template<typename _Tp, int cn> static inline
 void write(FileStorage& fs, const Vec<_Tp, cn>& v )
 {
@@ -954,6 +962,13 @@ void write(FileStorage& fs, const String& name, const Rect_<_Tp>& r )
 {
     cv::internal::WriteStructContext ws(fs, name, FileNode::SEQ+FileNode::FLOW);
     write(fs, r);
+}
+
+static inline
+void write(FileStorage& fs, const String& name, const RotatedRect& rr )
+{
+    cv::internal::WriteStructContext ws(fs, name, FileNode::SEQ+FileNode::FLOW);
+    write(fs, rr);
 }
 
 template<typename _Tp, int cn> static inline
@@ -1129,6 +1144,13 @@ void operator >> (const FileNode& n, std::vector<_Tp>& vec)
     FileNodeIterator it = n.begin();
     it >> vec;
 }
+
+static inline void read(const FileNode& node, RotatedRect& value, const RotatedRect& default_value)
+{
+    std::vector<float> temp; FileNodeIterator it = node.begin(); it >> temp;
+    value = temp.size() != 5 ? default_value : RotatedRect(Point2f(temp[0], temp[1]), Size2f(temp[2],temp[3]), temp[4]);
+}
+
 
 //! @} FileNode
 

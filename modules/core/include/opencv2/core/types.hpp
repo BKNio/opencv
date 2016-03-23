@@ -1844,7 +1844,26 @@ inline
 RotatedRect::RotatedRect(const Point2f& _center, const Size2f& _size, float _angle)
     : center(_center), size(_size), angle(_angle) {}
 
+static inline
+bool operator == (const RotatedRect& a, const RotatedRect& b)
+{
+    float aAngle = a.angle;
 
+    if(aAngle >= 180.f)
+        aAngle -= 180.f * int(aAngle / 180.f);
+    else if(aAngle < 0.f)
+        aAngle -= 180.f * int(aAngle / 180.f - 1.f);
+
+
+    float bAngle = b.angle;
+
+    if(bAngle >= 180.f)
+        bAngle -= 180.f * int(bAngle / 180.f);
+    else if(bAngle < 0.f)
+        bAngle -= 180.f * int(bAngle / 180.f - 1.f);
+
+    return a.center == b.center && a.size == b.size && std::fabs(aAngle - bAngle) < FLT_EPSILON;
+}
 
 ///////////////////////////////// Range /////////////////////////////////
 
